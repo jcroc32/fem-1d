@@ -1,27 +1,37 @@
-function [A0_local,A1_local,A2_local,cubicHermite] = localMatrix(h)
-	% f_1(x), f_2,(x), f_3(x), f_4(n) is element we are using on mesh
-	% f_i(x) = a_i*x^3 + b_i*x^2 + c_i*x + d_i, on [-1, 1]
-	% f_i'(x) = 3a_i*x^2 + 2b_i*x + c, on [-1, 1]
+function [A0,A1,A2,X] = localMatrix(h)
+	% f1(x), f2(x), f3(x), f4(x) is element we are using on mesh
+	% fi(x) = ai*x^3 + bi*x^2 + ci*x + di, on [-1, 1]
+	% fi'(x) = 3ai*x^2 + 2bi*x + ci, on [-1, 1]
 	
-	% f_1(-1)  = 1,    f_1'(-1) = f_1 (1)  = f_1'(1) = 0
-	% f_2'(-1) = 1,    f_2(-1)  = f_2 (1)  = f_2'(1) = 0
-	% f_3(1)   = 1,    f_3(-1)  = f_3'(-1) = f_3'(1) = 0
-	% f_4'(1)  = 1,    f_4'(-1) = f_4'(-1) = f_4 (1) = 0
+	% f1(-1)  = 1,    f1'(-1) = f1 (1)  = f1'(1) = 0
+	% f2'(-1) = h/2,  f2(-1)  = f2 (1)  = f2'(1) = 0
+	% f3(1)   = 1,    f3(-1)  = f3'(-1) = f3'(1) = 0
+	% f4'(1)  = h/2,  f4'(-1) = f4'(-1) = f4 (1) = 0
 	
+	% fi = [x^3 x^2 x 1]^T*[ai bi ci di] = polynomial^T*coefficients = A^T*X
 	
+	% X = [ a1 b1 c1 d1
+	%		a2 b2 c2 d2
+	%		a2 b2 c2 d2
+	%		a4 b4 c4 d4];
 	
-	% [ f(-1)  f'(-1)  f(1)  f'(1) ]
-	F = [-1      3      1      3;  % [  a
-		  1     -2      1      2;  %	b
-		 -1      1      1      1;  %	c
-		  1      0      1      0]; %	d  ];
+	%	[ poly(-1)	poly'(-1)		poly(1)		poly'(1) ]
+	A = [(-1)^3		 3*(-1)^2		(1)^3		3*(1)^2;
+		 (-1)^2		-2*(-1)^1		(1)^2		2*(1)^1;
+		 (-1)^1		 1*(-1)^0		(1)^1		1*(1)^0;
+		 (-1)^0		 0				(1)^0		0];
 	
-	% F * element = I
-	cubicHermite = F\eye(size(F)).*[1; h/2; 1; h/2];
-	% derivative
-	cubicHermite1 = polyDerivative(cubicHermite);
+	% A * X =  [f1(-1) f1'(-1) f1(1) f1'(1) = [ 1 0   0 0		= I.*[1; h/2; 1; h/2]	= B;
+	%			f2(-1) f2'(-1) f2(1) f2'(1)		0 h/2 0 0
+	%			f3(-1) f3'(-1) f3(1) f3'(1)		0 0   1 0
+	%			f4(-1) f4'(-1) f4(1) f4'(1)];	0 0   0 h/2];
+	
+	B = eye(size(A)).*[1; h/2; 1; h/2];
+	X = A\B;
+	% first derivative
+	Xx = polyDerivative(X);
 	% second derivative
-	cubicHermite2 = polyDerivative(cubicHermite1);
+	Xxx = polyDerivative(Xx);
 
 	% check what basis looks like
 	% x = transpose(-1:.1:1);
@@ -30,54 +40,52 @@ function [A0_local,A1_local,A2_local,cubicHermite] = localMatrix(h)
 	% plot(x,X*cubicHermite0)
 
 
-	A0_local = zeros(4);
-	A1_local = zeros(4);
-	A2_local = zeros(4);
+	A0 = zeros(4);
+	A1 = zeros(4);
+	A2 = zeros(4);
 
 	for n = 1:4
-		A0_local(n,:) = gaussQuad(conv2(cubicHermite,cubicHermite(n,:)));
+		A0(n,:) = gaussQuad(conv2(X,X(n,:)));
 	end
 
 	for n = 1:4
-		A1_local(n,:) = gaussQuad(conv2(cubicHermite1,cubicHermite1(n,:)));
+		A1(n,:) = gaussQuad(conv2(Xx,Xx(n,:)));
 	end
 
 	for n = 1:4
-		A2_local(n,:) = gaussQuad(conv2(cubicHermite2,cubicHermite2(n,:)));
+		A2(n,:) = gaussQuad(conv2(Xxx,Xxx(n,:)));
 	end
 
-	jacobian = h/2;
+	jacobian0 = h/2;
 	jacobian1 = 2/h;
 	jacobian2 = 8/h^3;
 
-	A0_local = jacobian*A0_local;
-	A1_local = jacobian1*A1_local;
-	A2_local = jacobian2*A2_local;
+	A0 = jacobian0*A0;
+	A1 = jacobian1*A1;
+	A2 = jacobian2*A2;
 end
 
-function v = polyDerivative(v) 
-v = v.*(length(v(1,:))-1:-1:0);
-v(:,end) = [];
+function dfdx = polyDerivative(f)
+	% pn(x) = an*x^n + an-1*x^n-1 + ... a0
+	% length(pn) = n + 1
+	poly_derivative = length(f)-1:-1:0; % n, n-1, ... 0
+	coeffs = f; % an an-1 ... a0
+	dfdx = coeffs.*poly_derivative;
+	dfdx(:,end) = []; % pn'(x) = an*n*x^n-1 + ... a1, (remove a0 column)
 end
 
 function v = gaussQuad(f) % from -1 to 1
- % Gaussian quad, exact for deg 7 and below
-weight = [0.3478548451374538;
-          0.6521451548625461;
-          0.6521451548625461;
-          0.3478548451374538];
+	% Gaussian quad, exact for deg 7 and below
+	weight = [0.3478548451374538;
+			  0.6521451548625461;
+			  0.6521451548625461;
+			  0.3478548451374538];
+	x = [-0.8611363115940526, -0.3399810435848563, 0.3399810435848563, 0.8611363115940526];
 
-x = [-0.8611363115940526, -0.3399810435848563, 0.3399810435848563, 0.8611363115940526];
-
-if isa(f, 'function_handle')
-    v = f(x)*weight;
-
-elseif isa(f, 'numeric') % if representing polynomial with row vector
-    X = zeros(length(f(1,:)),length(x));
-    X(end,:) = ones(size(x));
-    for n = 1:length(f(1,:))-1
-        X(end-n,:) = x.^n;
-    end
-    v = f*X*weight;
-end
+	X = zeros(length(f(1,:)),length(x));
+	X(end,:) = ones(size(x));
+	for n = 1:length(f(1,:))-1
+		X(end-n,:) = x.^n;
+	end
+	v = f*X*weight;
 end
