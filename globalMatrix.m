@@ -1,35 +1,35 @@
 function A = globalMatrix(A_local,N)
-N_entries = 2*N+2;
+%%N = 2*N+2;
+%%s = zeros(1,6*N-8);
+%% % main diagonal
+%%s(1) = A_local(1,1);
+%%s(2) = A_local(2,2);
+%%s(3:2:N-2) = A_local(1,1) + A_local(3,3);
+%%s(4:2:N-2) = A_local(2,2) + A_local(4,4);
+%%s(N-1) = A_local(3,3);
+%%s(N) = A_local(4,4);
+%% % 1st sub and super diagonal
+%%s(N+1) = A_local(2,1);
+%%s([N+2:2:2*N-1, 2*N+1:2:3*N-2]) = A_local(3,2);
+%%s([N+3:2:2*N-1, 2*N+2:2:3*N-2]) = A_local(2,1) + A_local(4,3);
+%%s(2*N) = A_local(1,2);
+%%s(2*N-1) = A_local(4,3);
+%%s(3*N-2) = A_local(4,3);
+%% % 2nd sub and super diagonal
+%%s(3*N-1:2:5*N-6) = A_local(3,1);
+%%s(3*N:2:5*N-6) = A_local(4,2);
+%% % 3rd sub and super diagonal
+%%s(5*N-5:6*N-8) = A_local(4,1);
+%% % indices: main, 1super, 1sub, 2super, 2sub, 3super,  3sub
+%%i = [1:N, 1:N-1, 2:N, 1:N-2, 3:N, 1:2:N-3, 4:2:N];
+%%j = [1:N, 2:N, 1:N-1, 3:N, 1:N-2, 4:2:N, 1:2:N-3];
+%%
+%%A = sparse(i,j,s,N,N);
 
-v = zeros(1,N_entries); % just temporary vector
-v(1:2:end-1) = A_local(1,1)+A_local(3,3);   % f overlap
-v(2:2:end) = A_local(2,2)+A_local(4,4); % f' overlap
-A = diag(v); % main diagonal 
-
-v = zeros(1,N_entries-1);
-v(1:2:end) = A_local(2,1)+A_local(4,3); % f*f' overlap (symmetry used
-v(2:2:end-1) = A_local(3,2);            % for supper and sub)
-A = A + diag(v,1);  % 1st supper diagonal
-A = A + diag(v,-1); % 1st sub diagonal
-
-v = zeros(1,N_entries-2);
-v(1:2:end-1) = A_local(3,1);
-v(2:2:end) = A_local(4,2);
-A = A + diag(v,2);  % upper diagonal
-A = A + diag(v,-2); % lower diagonal
-
-v = zeros(1,N_entries-3);
-v(1:2:end) = A_local(4,1);
-A = A + diag(v,-3);
-A = A + diag(v,3);
-
-A(1,1) = A_local(1,1); % 1st f entry no overlap
-A(2,2) = A_local(2,2); % 1st f' entry no overlap
-A(end,end) = A_local(end,end); % last f entry no overlap
-A(end-1,end-1) = A_local(end-1,end-1); % last f' entry no overlap
-
-A(2,1) = A_local(2,1); % supper diag 1st entry no overlap
-A(1,2) = A_local(1,2); % sub diag 1st entry no overlap
-A(end,end-1) = A_local(end,end-1); % supper diag last entry no overlap
-A(end-1,end) = A_local(end-1,end); % sub diag last entry no overlap
+A = sparse(1,1,0,N,N,6*N-8)
+	index = 1:4;
+	for k = 1:N/2 - 1
+		A(index,index) = A(index,index) + A_local;
+		index = index + 2;
+	end
 end
