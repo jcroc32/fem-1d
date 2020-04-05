@@ -1,10 +1,14 @@
-# include <iostream>
+#include <iostream>
 
 int main() {
-	int N = 10; // DOF + 1
+	// number of nodes in mesh
+	int N = 11;
+	double h = 1/double(N);
+	
 	double k = 1; 
 	double p = 0; 
 	double q = 0;
+	
 	double f[N+1];
 	for (int i = 0; i < N+1; i++){
 		f[i] = 1;
