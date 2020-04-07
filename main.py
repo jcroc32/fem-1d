@@ -6,8 +6,7 @@ N = 11
 # (k*u'')'' + (p*u')' + q*u = f, constant coeffecients
 coeffecients = [1,0,0] # (k, p, q)
 # LHS of PDE
-f = [[1 for i in range(N)], # f(x) at nodes
-	 [0 for i in range(N)]] # f'(x) at nodes
+f = ['1', '0'] # f(x), f'(x)
 # boundary conditions
 boundary = [[0, 0],  # u(0),  u(1)
 			[0, 0]]	 # u'(0), u'(1)
