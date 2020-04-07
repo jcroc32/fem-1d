@@ -10,12 +10,10 @@ f = ['1', '0'] # f(x), f'(x)
 # boundary conditions
 boundary = [[0, 0],  # u(0),  u(1)
 			[0, 0]]	 # u'(0), u'(1)
-
-# U = fourthOrderFEsolver(N,coeffecients,f,boundary);
-
-os.system("./local_matrix '{}' '{}' '{}' '{}' ".format(N,coeffecients,f,boundary))
+# solve FE eqution
+U = os.system("./linear_4th_order_1D_fem_solver '{}' '{}' '{}' '{}' ".format(N,coeffecients,f,boundary))
 U = [i for i in range(100)]
-
+# plot solution
 h = 1./len(U)
 x = [i*h for i in range(len(U))]
 plt.figure()

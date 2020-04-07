@@ -35,7 +35,7 @@ class vector { // implement vector as subclass
 	 void print();
 };
 
-matrix* matrix_multiply(matrix& A, matrix& B);
+matrix* multiply(matrix& A, matrix& B);
 vector* solve_upper_triangular_system(matrix U, vector x);
 vector* solve_lower_triangular_system(matrix L, vector x);
 
