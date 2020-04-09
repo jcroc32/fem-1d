@@ -26,7 +26,9 @@ double* matrix::values() {
 }
 
 void matrix::set(double* values) { // add error handling
-	this->_values = values; // must delete old values
+	double* temp = this->_values;
+	this->_values = values;
+	delete temp;
 }
 
 void matrix::set(int i, int j, double value) {
@@ -43,100 +45,78 @@ double matrix::cell(int i, int j) {
 	return this->_values[i*this->_m+j];
 }
 
-void matrix::print() {
-	std::cout<<"[ ";
-	for(int i = 0; i < this->_n; i++) {
-		for(int j = 0; j < this->_m; j++) {
+/* matrix operations */
+friend ostream& operator << (ostream& out, matrix A) {
+    out << "[ ";
+	for(int i = 0; i < A.n(); i++) {
+		for(int j = 0; j < A.m(); j++) {
 			if(j == 0 && i != 0) {
-				std::cout<<"  ";
+				out << "  ";
 			}
-			std::cout<<this->cell(i,j);
-			if(j != this->_m-1) {
-				std::cout<<", ";
+			out << A(i,j);
+			if(j != A.m()-1) {
+				out << ", ";
 			}
 		}
-		if(i != this->_n-1) {
-			std::cout<<std::endl;
+		if(i != A.n()-1) {
+			out << std::endl;
 		}
 	}
-	std::cout<<" ]"<<std::endl;
+	out << " ]" << std::endl;
+    return out;
 }
-/* vector class functions */
-vector::vector(int n, double* values) {
- 	this->_n = n;
-	this->_values = values;
-}
-vector::vector(int n) {
-	this->_n = n;
-	this->_values = new double[n]; // set to zero explicitly
-}
-int vector::n(){
-	return this->_n;
-}
-double* vector::values() {
-	return this->_values;
-}
-void vector::set(double* values) { // add error handling
-	this->_values = values; // must delete old values
-}
-void vector::set(int i, double value) {
-	if(i >= this->_n) { // better error handling
-		std::cerr<<"Indices not in range of matirx dimensions.";
+
+matrix operator + (matrix &A, matrix &B) { 
+	matrix C(A.n(),A.m());
+	for(int i = 0; i < A.n(); i++) {
+		for(int j = 0; j < A.m(); j++) {
+			C.set(i, j, A.cell(i,j)+B.cell(i,j));
+		}
 	}
-	this->_values[i] = value;
+	return C; 
 }
-double vector::cell(int i) {
-	if(i >= this->_n) { //better error handling
-		std::cerr<<"Indices not in range of matirx dimensions.";
-	}
+
+double matrix::operator () (int i) { 
 	return this->_values[i];
 }
-void vector::print() {
-	std::cout<<"[ ";
-	for(int i = 0; i < this->_n; i++) {
-		if(i != 0) {
-			std::cout<<"  ";
-		}
-		std::cout<<this->cell(i);
-		if(i != this->_n-1) {
-			std::cout<<std::endl;
-		}
-	}
-	std::cout<<" ]"<<std::endl;
+
+double matrix::operator () (int i, int j) { 
+	return this->_values[i*this->_n+j];
 }
-/* matrix operations */
-matrix* multiply(matrix& A, matrix& B) { // check A.m = B.m()
-	matrix* C = new matrix(A.n(),B.m());
+
+void multiply(matrix& A, matrix& B, matrix& C) { // check A.m = B.m()
 	for(int i = 0; i < A.n(); i++) {
 		for(int j = 0; j < B.m(); j++) {
 			for(int k = 0; k < B.n(); k++) {
-				C->set(i, j, (C->cell(i,j) + A.cell(i,k)*B.cell(k,j)));
+				C.set(i, j, (C.cell(i,j) + A.cell(i,k)*B.cell(k,j)));
 			}
 		}
 	}
-	return C;
 }
-
-vector* solve_lower_triangular_system(matrix L, vector b) {
-	vector* x = new vector(L.n());
+// ones on the diagonal
+void solve_lower_triangular_system(matrix& L, matrix& x) {
 	for(int i = 0; i < L.n(); i++) {
-		x->set(i, b.cell(i));
-		for(int j = 0; j < i; j++) {
-			x->set(i, x->cell(i) - L.cell(i,j)*x->cell(j));
+		if(L.cell(i,i) != 1) {
+			std::cerr<<"Invalid lower triangular matrix.";
 		}
-		x->set(i, x->cell(i)/L.cell(i,i));
+		for(int j = 0; j < i; j++) {
+			x.set(i, 1, x.cell(i,1) - L.cell(i,j)*x.cell(j,1));
+		}
 	}
-	return x;
 }
 
-vector* solve_upper_triangular_system(matrix U, vector b) {
-	vector* x = new vector(U.n());
+void solve_upper_triangular_system(matrix& U, matrix& x) {
 	for(int i = U.n()-1; i > -1; i--) {
-		x->set(i, b.cell(i));
-		for(int j = U.n()-1; j > i; j--) {
-			x->set(i, x->cell(i) - U.cell(i,j)*x->cell(j));
+		if(U.cell(i,i) == 0) {
+			std::cerr<<"Divide by zero error.";
 		}
-		x->set(i, x->cell(i)/U.cell(i,i));
+		for(int j = U.n()-1; j > i; j--) {
+			x.set(i, 1, x.cell(i,1) - U.cell(i,j)*x.cell(j,1));
+		}
+		x.set(i, 1, x.cell(i,1)/U.cell(i,i));
 	}
-	return x;
+}
+
+void LU_factorization(matrix& U, matrix& x) {
+	
 }

@@ -3,8 +3,8 @@
 
 class matrix {
 	private:
-	 int _n;
-	 int _m;
+	 int _n; // rows
+	 int _m; // columns
 	protected:
 	 double* _values;
 	public:
@@ -13,30 +13,14 @@ class matrix {
 	 int n();
 	 int m();
 	 double* values();
-	 void set(double* values);
 	 void set(int i, int j, double value);
-	 double cell(int i, int j);
-	 void print();
+	 double operator () (int i, int j);
+	 matrix operator = (double* values);
 };
+matrix operator + (matrix &A, matrix &B);
+matrix operator * (matrix &A, matrix &B);
 
-class vector { // implement vector as subclass
-	private:
-	 int _n;
-	protected:
-	 double* _values;
-	public:
-	 vector(int n, double* values);
-	 vector(int n);
-	 int n();
-	 double* values();
-	 void set(double* values);
-	 void set(int i, double value);
-	 double cell(int i);
-	 void print();
-};
-
-matrix* multiply(matrix& A, matrix& B);
-vector* solve_upper_triangular_system(matrix U, vector x);
-vector* solve_lower_triangular_system(matrix L, vector x);
+void solve_upper_triangular_system(matrix& U, matrix& x);
+void solve_lower_triangular_system(matrix& L, matrix& x);
 
 #endif

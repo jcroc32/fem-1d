@@ -19,8 +19,12 @@ int main() {
 	}
 	A.print();
 	B.print();
-	matrix* C = multiply(A,B);
-	C->print();
+	matrix C(3,2);
+	multiply(A,B,C);
+	C.print();
+	
+	matrix D = B + C;
+	D.print();
 	
 	
 	double L_[3*3] = {	1,0,0,
@@ -33,17 +37,16 @@ int main() {
 	
 	matrix L(3,3,L_);
 	matrix U(3,3,U_);
-	vector b(3,b_);
+	matrix b(3,1,b_);
 	
 	L.print();
 	U.print();
 	b.print();
 	
-	vector* x = solve_lower_triangular_system(L,b);
-	vector* y = solve_upper_triangular_system(U,b);
-	
-	x->print();
-	y->print();
+	solve_lower_triangular_system(L,b);
+	b.print();
+	solve_upper_triangular_system(U,b);
+	b.print();
 	
 	
 	function2d element[4];
