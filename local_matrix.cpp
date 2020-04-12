@@ -1,4 +1,5 @@
 #include "linear_algebra_functions.h"
+
 double element_1(double h, double x) { return (x*x*x - 3*x + 2)/4; }
 double element_2(double h, double x) { return h*(x*x*x - x*x - x + 1)/8; }
 double element_3(double h, double x) { return (-x*x*x + 3*x + 2)/4; }
