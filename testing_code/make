@@ -1,0 +1,2 @@
+g++ -c parallel1.cpp -o parallel1.o -fopenmp
+g++ parallel1.o -o parallel1 -fopenmp
