@@ -1,8 +1,8 @@
-#include "fem-1d/matrix/matrix.h"
-#include "fem-1d/linear_algebra_functions/linear_algebra_functions.h"
+#include "../matrix/matrix.h"
+#include "../linear_algebra_functions/linear_algebra_functions.h"
 
 int main() {
-	int n = 20000;
+	int n = 2000;
 	double* a = new double[n*n] {0};
 	double* x = new double[1*n] {0};
 	for(int i = 0; i < n; i++) {

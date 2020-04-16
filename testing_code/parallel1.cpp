@@ -1,7 +1,7 @@
 #include <math.h>
 #include <iostream>
 
-static const int size = 1024 * 1024 * 128;
+static const int size = 1024 * 1024 * 64;
 int main(){
     double total = 0;
 

@@ -1,2 +1,3 @@
-g++ -c parallel1.cpp -o parallel1.o -fopenmp
-g++ parallel1.o -o parallel1 -fopenmp
+g++ parallel1.cpp -fopenmp
+
+g++ test.cpp ../matrix/matrix.cpp  ../linear_algebra_functions/linear_algebra_functions.cpp -fopenmp
