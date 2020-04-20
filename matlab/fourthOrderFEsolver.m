@@ -34,9 +34,9 @@ U(end-1) = u1;  U(end) = up1;
 % cubicH4 = @(x) 1/4*(x.^3+x.^2-x-1)*h/2; %%
 % U_FE = [];
 % for n = 1:length(U)/2-1
-%     xc = x(n):.0001:x(n+1);
-%     xp = dom_h_1(xc);
-%     U_FE = [U_FE(1:end-1) U(2*n-1)*cubicH1(xp)+U(2*n)*cubicH2(xp)+U(2*n+1)*cubicH3(xp)+U(2*n+2)*cubicH4(xp)];
+%	xc = x(n):.0001:x(n+1);
+%	xp = dom_h_1(xc);
+%	U_FE = [U_FE(1:end-1) U(2*n-1)*cubicH1(xp)+U(2*n)*cubicH2(xp)+U(2*n+1)*cubicH3(xp)+U(2*n+2)*cubicH4(xp)];
 % end
 %_________________________________________________
 x = (0:.01:1)/h;
@@ -46,10 +46,9 @@ x = 2*(x-X)-1; % take to [-1,1]
 x = [x.^3; x.^2; x; ones(size(x))];
 m = 1;
 for n = X
-    domain = (2*n+1):(2*n+4);
-    U_FE(m)= sum(cubicHermite.*U(domain)*x(:,m));
-    m = m+1;
+	domain = (2*n+1):(2*n+4);
+	U_FE(m)= sum(cubicHermite.*U(domain)*x(:,m));
+	m = m+1;
 end
 
 end
-

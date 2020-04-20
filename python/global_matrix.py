@@ -1,13 +1,10 @@
-from scipy.sparse import lil_matrix
-from scipy.sparse.linalg import spsolve
-from numpy.linalg import solve, norm
-from numpy.random import rand
+import scipy.sparse
 
-A = lil_matrix((1000, 1000))
-A[0, :100] = rand(100)
-A[1, 100:200] = A[0, :100]
-A.setdiag(rand(1000))
-
-A = A.tocsr()
-b = rand(1000)
-x = spsolve(A, b)
+def create(N, A0, A1, A2, c):
+	data = N*[i for a in A0 for i in a]
+	row = [i  for j in range(2, 2*N+2, 2)  for i in range(j-2, j+2)  for k in range(4)]
+	column = [i  for j in range(2, 2*N+2, 2)  for k in range(4)  for i in range(j-2, j+2)]
+	
+	A = scipy.sparse.coo_matrix((data, (row, column)), shape=(2*N+2, 2*N+2))
+	A = A.tobsr()
+	return A
