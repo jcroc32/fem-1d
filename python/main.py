@@ -2,10 +2,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 import fe_4th_order_1d_solver
 
-# (c0*u")" + (c1*u')' + c2*u = f
+# (c2*u")" + (c1*u')' + c0*u = f
 # number of nodes in the mesh
 N = 3
-# coeffecients
+# PDE coeffecients (c0, c1, c2)
 def c(x):
 	return (1, 0, 0)
 # LHS (f, f')
