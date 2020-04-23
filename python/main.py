@@ -6,9 +6,8 @@ import fe_4th_order_1d_solver
 # number of nodes in the mesh
 N = 3
 # PDE coeffecients (c0, c1, c2)
-def c(x):
-	return (1, 0, 0)
-# LHS (f, f')
+c = (1, 0, 0)
+# RHS (f, f')
 def f(x):
 	return (1, 0)
 # boundary conditions (u0, u'0, u1, u'1)
