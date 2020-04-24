@@ -47,8 +47,9 @@ x = [x.^3; x.^2; x; ones(size(x))];
 m = 1;
 for n = X
 	domain = (2*n+1):(2*n+4);
-	U_FE(m)= sum(cubicHermite.*U(domain)*x(:,m));
+	U_FE(m)= U(domain)'*cubicHermite*x(:,m);
+	disp(U(domain))
+	disp(x(:,m))
 	m = m+1;
 end
-
 end

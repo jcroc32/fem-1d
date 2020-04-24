@@ -4,16 +4,16 @@ import fe_4th_order_1d_solver
 
 # (c2*u")" + (c1*u')' + c0*u = f
 # number of nodes in the mesh
-N = 3
+N = 10
 # PDE coeffecients (c0, c1, c2)
-c = (1, 0, 0)
+c = (1, 1, 1)
 # RHS (f, f')
 def f(x):
-	return (1, 0)
+	return (x**4, 4*x**3)
 # boundary conditions (u0, u'0, u1, u'1)
-BC = (0, 0, 0, 0)
+BC = (1, 1, 1, 1)
 # solve pde
-x = np.linspace(0, 1, num=100);
+x = np.linspace(0, 1, num=40)
 u = fe_4th_order_1d_solver.solve(N, c, f, BC, x)
 # plot solution
 plt.plot(x, u, '.-')
