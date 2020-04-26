@@ -6,7 +6,8 @@ import fe_4th_order_1d_solver
 # number of nodes in the mesh
 N = 10
 # PDE coeffecients (c0, c1, c2)
-c = (1, 1, 1)
+c2 = 1; c1 = 1; c0 = 1
+c = (c0, c1, c2)
 # RHS (f, f')
 def f(x):
 	return (x**4, 4*x**3)

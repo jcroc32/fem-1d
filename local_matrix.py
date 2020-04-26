@@ -14,26 +14,26 @@ def create(h):
 	A0 = np.zeros((4,4))
 	points_matrix = np.vander(points, 7)
 	for i in range(4):
-		X = elements[i]
+		Xi = elements[i,:]
 		for j in range(4):
-			Y = elements[j]
-			A0[i,j] = np.dot(points_matrix @ np.polymul(X, Y), weights)
+			Xj = elements[j,:]
+			A0[i,j] = np.dot(points_matrix @ np.polymul(Xi, Xj), weights)
 	# stiffness matrix A1 = S X'^T*X' dx
 	A1 = np.zeros((4,4))
 	points_matrix = np.vander(points, 5)
 	for i in range(4):
-		X = np.polyder(elements[i], 1)
+		Xi = np.polyder(elements[i,:], 1)
 		for j in range(4):
-			Y = np.polyder(elements[j], 1)
-			A1[i,j] = np.dot(points_matrix @ np.polymul(X, Y), weights)
+			Xj = np.polyder(elements[j,:], 1)
+			A1[i,j] = np.dot(points_matrix @ np.polymul(Xi, Xj), weights)
 	# bending matrix A2 = S X"^T*X" dx
 	A2 = np.zeros((4, 4))
 	points_matrix = np.vander(points, 3)
 	for i in range(4):
-		X = np.polyder(elements[i], 2)
+		Xi = np.polyder(elements[i,:], 2)
 		for j in range(4):
-			Y = np.polyder(elements[j], 2)
-			A2[i,j] = np.dot(points_matrix @ np.polymul(X, Y), weights)
+			Xj = np.polyder(elements[j,:], 2)
+			A2[i,j] = np.dot(points_matrix @ np.polymul(Xi, Xj), weights)
 	# multiply by jacobian
 	A0 = h/2*A0
 	A1 = 2/h*A1
