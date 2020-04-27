@@ -36,5 +36,4 @@ def create(N, c, f, BC, A0, A1, A2):
 	F[:4] = F[:4] - bc1
 	F[-4:] = F[-4:] - bc2
 	F = F[2:-2]
-	
 	return (A, F)

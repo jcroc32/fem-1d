@@ -12,18 +12,17 @@ function u = fe_4th_order_1d_solver(N, c, f, BC, x)
 	% get index of U to use for x 
 	elem = floor(x);
 	if elem(end) == N
-		% no N-1 index so must use previous node
+		% no N index so must use previous node
 		% (thus use 1 instead of -1 x value)	
 		elem(end) = N-1; 
 	end
 	% take x to [-1, 1] domain so we can use our elements
 	x = 2*(x - elem)-1;
-	# elements in coeffecient form, so make polynmial values
-	x = [x.^3; x.^2; x; ones(size(x))];
+	% elements in coeffecient form, so make polynmial values
+	x = vander(x, 4)';
 	i = 1;
 	for n = elem
-		domain = (2*n+1):(2*n+4);
-		u(i) = U(domain)'*elements*x(:,i);
+		u(i) = U((2*n+1):(2*n+4))'*elements*x(:,i);
 		i = i+1;
 	end
 end
